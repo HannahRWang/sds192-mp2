@@ -1,0 +1,17 @@
+---
+title: "Mini-Project 2"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+HI Emma
+
+This is a test :) 
+
+```{r}
+6+7
+```
+

@@ -10,6 +10,9 @@ knitr::opts_chunk$set(echo = TRUE)
 hello emma this is wild
 
 ```{r}
-
+load("house_elections.rda")
+load("candidates.rda")
+load("committees.rda")
+load("contributions.rda")
 ```
 

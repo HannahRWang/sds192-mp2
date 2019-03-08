@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 HI hannah
 
-This is a test :) 
+this is test 2
 
 ```{r}
 

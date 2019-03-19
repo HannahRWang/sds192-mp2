@@ -18,24 +18,37 @@ load("contributions.rda")
 ```
 
 ```{r}
-contributions <- contributions%>%
-  filter(transaction_type == "24E", state == "MA", entity_type == "IND",transaction_pgi == "G2012")%>%
-  select(cmte_id, transaction_pgi, entity_type, name, state, transaction_amt, cand_id, transaction_type, file_num)
+contributions2 <- contributions %>%
+  filter(transaction_type == "24E", 
+         entity_type == "IND", 
+         transaction_pgi == "G2012")%>%
+  select(cmte_id, transaction_type, entity_type, transaction_pgi, name, state, transaction_amt, cand_id, file_num)
+  
 ```
 
 ```{r}
-candidates <- candidates%>%
-  filter(cand_election_yr == "2012")
+candidates2 <- candidates %>%
+  filter(cand_election_yr == "2012", cand_office == "P")
 ```
 
+```{r}
+graph <- contributions2 %>%
+  full_join(candidates2, by = "cand_id")
+```
 
+```{r}
+newgraph <- graph %>%
+  group_by(state, cand_name) %>%
+  summarize(avg_donation = mean(transaction_amt))%>%
+  na.omit
+
+
+```
 
 
 ```{r}
-ggplot(contributions, aes(x = ))
+ggplot(newgraph, aes(x=cand_name, y=avg_donation))+
+  geom_col()+
+  facet_wrap(~state)
 ```
-
-
-
-
 

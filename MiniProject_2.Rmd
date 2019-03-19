@@ -7,6 +7,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
 ```
 
 ```{r}
@@ -14,6 +15,41 @@ load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
+```
+
+```{r}
+contributions2 <- contributions %>%
+  filter(transaction_type == "24E", 
+         entity_type == "IND", 
+         transaction_pgi == "G2012")%>%
+  select(cmte_id, transaction_type, entity_type, transaction_pgi, name, state, transaction_amt, cand_id, file_num)
+  
+```
+
+```{r}
+
+
+candidates2 <- candidates %>%
+  filter(cand_election_yr == "2012")
+```
+
+```{r}
+graph <- contributions2 %>%
+  full_join(candidates2, by = "cand_id")
+```
+
+```{r}
+newgraph <- graph %>%
+  group_by(state, cand_name) %>%
+  summarize(avg_donation = mean(transaction_amt)) #%>%
+#  filter(cand_name == "OBAMA, BARACK" | cand_name == "ROMNEY, MITT / RYAN, PAUL D.")
+```
+
+
+
+```{r}
+ggplot(newgraph, aes(x=cand_name, y=avg_donation))+
+  geom_col()
 ```
 
 

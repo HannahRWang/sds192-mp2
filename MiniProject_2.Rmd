@@ -27,10 +27,8 @@ contributions2 <- contributions %>%
 ```
 
 ```{r}
-
-
 candidates2 <- candidates %>%
-  filter(cand_election_yr == "2012")
+  filter(cand_election_yr == "2012", cand_office == "P")
 ```
 
 ```{r}
@@ -41,16 +39,29 @@ graph <- contributions2 %>%
 ```{r}
 newgraph <- graph %>%
   group_by(state, cand_name) %>%
-  summarize(avg_donation = mean(transaction_amt)) #%>%
-#  filter(cand_name == "OBAMA, BARACK" | cand_name == "ROMNEY, MITT / RYAN, PAUL D.")
+  summarize(avg_donation = mean(transaction_amt))%>%
+  na.omit
 ```
-
-
 
 ```{r}
-ggplot(newgraph, aes(x=cand_name, y=avg_donation))+
-  geom_col()
+finalgraph <- ggplot(newgraph, aes(x=cand_name, y=avg_donation, fill = cand_name))+
+  geom_col()+
+  facet_wrap(~state, scales='free_x', ncol = 5)+
+  xlab("Candidate Name")+
+  ylab("Average Donation")+
+  theme(legend.position = "none")+
+  scale_fill_manual(values = c("blue","red"))+
+  theme(axis.text.x = element_text(size=5),
+        axis.text.y = element_text(size=5))+
+  labs(title = "Average Individual Presidential Candidate Donation By State")
+  
+finalgraph
 ```
 
 
 
+
+^[Github Repository: https://github.com/HannahRWang/sds192-mp2]
+
+
+sample text that is really interesting

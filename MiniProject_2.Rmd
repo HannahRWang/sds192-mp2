@@ -18,35 +18,31 @@ load("contributions.rda")
 ```
 
 ```{r}
-contributions2 <- contributions %>%
+contributions_alt <- contributions %>%
   filter(transaction_type == "24E", 
-         entity_type == "IND", 
          transaction_pgi == "G2012")%>%
   select(cmte_id, transaction_type, entity_type, transaction_pgi, name, state, transaction_amt, cand_id, file_num)
   
 ```
 
 ```{r}
-candidates2 <- candidates %>%
+candidates_alt <- candidates %>%
   filter(cand_election_yr == "2012", cand_office == "P")
 ```
 
 ```{r}
-graph <- contributions2 %>%
-  full_join(candidates2, by = "cand_id")
-```
-
-```{r}
-newgraph <- graph %>%
+joined_table <- contributions_alt %>%
+  full_join(candidates_alt, by = "cand_id") %>%
+  filter(entity_type == "IND", state == "CA") %>%
   group_by(state, cand_name) %>%
   summarize(avg_donation = mean(transaction_amt))%>%
   na.omit
-<<<<<<< HEAD
 ```
 
 ```{r}
-finalgraph <- ggplot(newgraph, aes(x=cand_name, y=avg_donation, fill = cand_name))+
+individual_contributions <- ggplot(joined_table, aes(x=cand_name, y=avg_donation, fill = cand_name))+
   geom_col()+
+  geom_text(aes(label=round(avg_donation, digits = 2)))+
   facet_wrap(~state, scales='free_x', ncol = 5)+
   xlab("Candidate Name")+
   ylab("Average Donation")+
@@ -55,15 +51,42 @@ finalgraph <- ggplot(newgraph, aes(x=cand_name, y=avg_donation, fill = cand_name
   theme(axis.text.x = element_text(size=5),
         axis.text.y = element_text(size=5))+
   labs(title = "Average Individual Presidential Candidate Donation By State")
-  
-finalgraph
+
+individual_contributions
 ```
 
 ```{r}
-ggplot(newgraph, aes(x=cand_name, y=avg_donation))+
-  geom_col()+
-  facet_wrap(~state)
+functionname <- function(name_arg) {
+  contributions_alt %>%
+  full_join(candidates_alt, by = "cand_id") %>%
+  filter(entity_type == name_arg, state == "CA") %>%
+  na.omit
+}
 ```
+
+```{r}
+entity_types <- c("IND", "ORG")
+```
+
+
+```{r}
+mapped_function <- map(entity_types, functionname)
+mapped_function <- bind_rows(mapped_function)
+
+new_mapped_function <- mapped_function %>%
+  group_by(entity_type, cand_name) %>%
+  summarize(avg_donation = mean(transaction_amt))
+
+```
+
+```{r}
+final_plot <- ggplot(new_mapped_function, aes(x=cand_name, y=avg_donation, fill = cand_name))+
+  geom_col() +
+  facet_wrap(~entity_type)
+
+final_plot
+```
+
 
 
 ^[Github Repository: https://github.com/HannahRWang/sds192-mp2]

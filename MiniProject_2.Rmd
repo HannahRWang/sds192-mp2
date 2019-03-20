@@ -65,7 +65,7 @@ functionname <- function(name_arg) {
 ```
 
 ```{r}
-entity_types <- c("IND", "ORG")
+entity_types <- c("IND", "ORG", "CCM", "COM")
 ```
 
 
@@ -82,11 +82,13 @@ new_mapped_function <- mapped_function %>%
 ```{r}
 final_plot <- ggplot(new_mapped_function, aes(x=cand_name, y=avg_donation, fill = cand_name))+
   geom_col() +
-  facet_wrap(~entity_type)
+  scale_fill_manual(values = c("blue","red"))+
+  facet_wrap(~entity_type)+
+  geom_text(aes(label=round(avg_donation, digits = 2)))
+
 
 final_plot
 ```
-
 
 
 ^[Github Repository: https://github.com/HannahRWang/sds192-mp2]

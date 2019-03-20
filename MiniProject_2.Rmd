@@ -41,6 +41,7 @@ newgraph <- graph %>%
   group_by(state, cand_name) %>%
   summarize(avg_donation = mean(transaction_amt))%>%
   na.omit
+<<<<<<< HEAD
 ```
 
 ```{r}
@@ -58,10 +59,11 @@ finalgraph <- ggplot(newgraph, aes(x=cand_name, y=avg_donation, fill = cand_name
 finalgraph
 ```
 
-
+```{r}
+ggplot(newgraph, aes(x=cand_name, y=avg_donation))+
+  geom_col()+
+  facet_wrap(~state)
+```
 
 
 ^[Github Repository: https://github.com/HannahRWang/sds192-mp2]
-
-
-sample text that is really interesting

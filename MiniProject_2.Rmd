@@ -22,12 +22,15 @@ contributions_alt <- contributions %>%
   filter(transaction_type == "24E", 
          transaction_pgi == "G2012")%>%
   select(cmte_id, transaction_type, entity_type, transaction_pgi, name, state, transaction_amt, cand_id, file_num)
-  
+
+#This chunk creates a new dataset called "contributions_alt" that filters for "24E" (independent expenditure advocating election of candidate) and "G2012" (2012 General Election). It also only includes variables that are relevant to further analyses. 
 ```
 
 ```{r}
 candidates_alt <- candidates %>%
   filter(cand_election_yr == "2012", cand_office == "P")
+
+#This chunk creates a new dataset called "candidates_alt" that filters for "2012" (2012 election round) and "P" (Presidential election race). This way, both "contributions_alt" and "candidates_alt" only include data from the General Election of 2012.  
 ```
 
 ```{r}
@@ -37,6 +40,8 @@ joined_table <- contributions_alt %>%
   group_by(state, cand_name) %>%
   summarize(avg_donation = mean(transaction_amt))%>%
   na.omit
+
+#This chunk joins the two datasets just created. It filters for only donations which have an entity classified as "IND" representing individuals from "CA", California. The variable transaction_amt is summarized to calculate the average donation for each candidate by state. The new dataset that results from this join is called "joined_table" and returns two observations of three variables. We have successfully calculated how much money individuals in California donated on average to Barack Obama and Mitt Romney's 2012 Presidential Campaigns.
 ```
 
 ```{r}
@@ -50,10 +55,13 @@ individual_contributions <- ggplot(joined_table, aes(x=cand_name, y=avg_donation
   scale_fill_manual(values = c("blue","red"))+
   theme(axis.text.x = element_text(size=5),
         axis.text.y = element_text(size=5))+
-  labs(title = "Average Individual Presidential Candidate Donation By State")
+  labs(title = "Average Individual Presidential Candidate Donation in California")
 
 individual_contributions
+
+#This chunk creates a bar graph that portrays the average donation Obama and Romney received from individuals in the state of California during the 2012 Presidential Campaign. As mentioned before, these donations only include those advertising for each candidate. 
 ```
+
 
 ```{r}
 functionname <- function(name_arg) {
@@ -62,10 +70,14 @@ functionname <- function(name_arg) {
   filter(entity_type == name_arg, state == "CA") %>%
   na.omit
 }
+
+#This chunk creates a function that joins candidates_alt and contributions_alt but can additionally filter for any donation entity type we ask it to. This way, we can study more entity types.
 ```
 
 ```{r}
-entity_types <- c("IND", "ORG", "CCM", "COM")
+entity_types <- c("IND", "ORG", "CCM")
+
+#The entity types we have chosen to study are individual, organization, and candidate committee. 
 ```
 
 
@@ -77,6 +89,7 @@ new_mapped_function <- mapped_function %>%
   group_by(entity_type, cand_name) %>%
   summarize(avg_donation = mean(transaction_amt))
 
+#This creates a table called new_mapped_function that calculates the average donation for each type of entity per candidate.
 ```
 
 ```{r}
@@ -89,6 +102,8 @@ final_plot <- ggplot(new_mapped_function, aes(x=cand_name, y=avg_donation, fill 
 
 final_plot
 ```
+
+
 
 
 ^[Github Repository: https://github.com/HannahRWang/sds192-mp2]

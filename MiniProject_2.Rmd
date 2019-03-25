@@ -96,12 +96,17 @@ new_mapped_function <- mapped_function %>%
 final_plot <- ggplot(new_mapped_function, aes(x=cand_name, y=avg_donation, fill = cand_name))+
   geom_col() +
   scale_fill_manual(values = c("blue","red"))+
-  facet_wrap(~entity_type)+
+  facet_wrap(~entity_type, ncol = 3, nrow=1, scales = "fixed", shrink = TRUE, labeller(entity_type=
+      c("CCM" = "Candidate Committee",
+        "IND" = "Individual",
+        "ORG" = "Organization"))) +
   theme(axis.text.x = element_text(angle=60, hjust = 1))+
   xlab("Candidate Name")+
   ylab("Average Donation")+
   guides(fill=guide_legend(title="Candidates"))+
-  geom_text(aes(label=round(avg_donation, digits = 2)))
+  geom_text(aes(label=round(avg_donation, digits = 2)))+
+  labs(title = "Average  Presidential Candidate Donation by Political Entity in California")
+
 
 
 final_plot

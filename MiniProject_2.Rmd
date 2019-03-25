@@ -8,6 +8,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(wordcountaddin)
 ```
 
 ```{r}
@@ -30,6 +31,9 @@ contributions_alt <- contributions %>%
 candidates_alt <- candidates %>%
   filter(cand_election_yr == "2012", cand_office == "P")
 
+candidates_alt$cand_name <- gsub("ROMNEY, MITT / RYAN, PAUL D.", "ROMNEY, MITT", candidates_alt$cand_name)
+
+
 #This chunk creates a new dataset called "candidates_alt" that filters for "2012" (2012 election round) and "P" (Presidential election race). This way, both "contributions_alt" and "candidates_alt" only include data from the General Election of 2012.  
 ```
 
@@ -47,15 +51,18 @@ joined_table <- contributions_alt %>%
 ```{r}
 individual_contributions <- ggplot(joined_table, aes(x=cand_name, y=avg_donation, fill = cand_name))+
   geom_col()+
-  geom_text(aes(label=round(avg_donation, digits = 2)))+
+  geom_text(aes(label=round(avg_donation, digits = 2)), color = "white")+
   facet_wrap(~state, scales='free_x', ncol = 5)+
+  guides(fill=guide_legend(title="Candidates"))+
   xlab("Candidate Name")+
   ylab("Average Donation")+
   theme(legend.position = "none")+
   scale_fill_manual(values = c("blue","red"))+
   theme(axis.text.x = element_text(size=5),
         axis.text.y = element_text(size=5))+
-  labs(title = "Average Individual Presidential Candidate Donation in California")
+  labs(title = "Average Individual Presidential Candidate Donation in CA")+
+  theme_dark()+
+  theme(plot.title = element_text(face="bold", size=15))
 
 individual_contributions
 
@@ -100,18 +107,35 @@ final_plot <- ggplot(new_mapped_function, aes(x=cand_name, y=avg_donation, fill 
       c("CCM" = "Candidate Committee",
         "IND" = "Individual",
         "ORG" = "Organization"))) +
-  theme(axis.text.x = element_text(angle=60, hjust = 1))+
   xlab("Candidate Name")+
   ylab("Average Donation")+
   guides(fill=guide_legend(title="Candidates"))+
-  geom_text(aes(label=round(avg_donation, digits = 2)))+
-  labs(title = "Average  Presidential Candidate Donation by Political Entity in California")
-
+  geom_text(aes(label=round(avg_donation, digits = 2)), color = "white")+
+  labs(title = "Average Presidential Candidate Donation by Political Entity in CA")+
+  theme_dark()+
+  theme(axis.text.x = element_text(angle=60, hjust = 1))+
+  theme(plot.title = element_text(face="bold", size=13))
 
 
 final_plot
 ```
 
+This data compare the average 24E donation from individual, organization, and candidate committees for the top Presidential candidate from the Democratic and Republican political parties in the general 2012 election. 
+
+The first graph is a depiction of the average campaign contribution by individuals to the specified candidates, Barack Obama and Mitt Romney from the state of California. 
+
+The second graph is this same type of data wrangling applied to all three types of political entities that are allowed to give money to political candidates during elections: Candidate Committees, Political Organizations, and Individuals. This graph has been faceted to provide clarity when attempting to discern between each type of political entity. The candidates’ names are tilted at an angle, so as to enhance readability when placed together in more narrow columns.
+
+ Both of the graphs’ total amounts of money are placed at the top of their columns, so as to give more detail about how much money was given to each candidate. The data is displayed using a bar chart; as according to the ranking of visual cues, length is one of the easiest ways to convey information, and the bars can be broken down easily into categories for each candidate. This way, the data graphic is simultaneously informative and comprehensible.
+
+The state of California is used specifically because it is the state that gave the largest amount of donation money overall in the election, as well as being considered the state that is considered a significant political powerhouse, holding the greatest populous and the most electoral votes. 
+
+The data is filtered to only include the Democratic and Republican parties because these are most prevalent parties that are discussed each election year. Any other parties’ impacts, such as the Independent party (IND), or the Green party (GRE)  on the election are significantly smaller. 
+The colors blue and red are designated to the candidates Obama and Romney because these are the main colors of their respective political parties; blue being associated with the Democratic (DEM) party and red being associated with the Republican (REP) party. 
+
+Overall, this graph shows that Romney carried more financial support within the state of California. While he received next to no financial support from Committees, he received a greater amount from Individuals, and a significantly greater amount from organizations. In correlation with this information, according to the Federal Election Commission and the website OpenSecrets.org, the majority of Obama’s funding came from smaller, yet more numerous contributions from individuals, while Romney’s funding came from larger individual contributions and “others” (organizations), which include Goldman Sachs, Bank of America, and Morgan Stanley. Comparatively, organizations that gave to Obama include Google Inc., the University of California, and Microsoft Corp.
+
+This information provides historical context to the 2012 election, as well as important information that could be used by party advertising in future elections. The Democratic party should attempt to cater more towards individuals with more of a middle/lower-class background, while the Republicans would find more source-funding from their comfort zone as well: the upper class individuals and organizations. California should be targeted by both parties, as it is a major source of financial support, and despite being historically blue, the state is not a solely blue monetary provider.
 
 
 
